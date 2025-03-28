@@ -56,24 +56,33 @@ class PersonBadge extends LitElement {
   }
 
   public render() {
-    if (!this.hass) return;
+    if (!this.hass) {
+      console.error("No Home Assistant instance found");
+      return;
+    }
+
+    const personsAtHome = Object.entries(this.hass.states)
+      .filter(([key]) => key.startsWith("person."))
+      .filter(([, value]) => value.state === "home")
+      .filter(([, value]) => value.attributes?.entity_picture);
+
+    if (personsAtHome.length === 0) {
+      console.info("No persons at home");
+      return;
+    }
 
     return html`
       <ha-badge>
-        ${Object.entries(this.hass.states)
-          .filter(([key]) => key.startsWith("person."))
-          .filter(([, value]) => value.state === "home")
-          .filter(([, value]) => value.attributes?.entity_picture)
-          .map(([key, value]) => {
-            return html`
-              <img
-                class="person-image"
-                src="${value.attributes?.entity_picture || ""}"
-                alt="${key}"
-                title="${key.replace("person.", "").replace("_", " ")}"
-              />
-            `;
-          })}
+        ${personsAtHome.map(([key, value]) => {
+          return html`
+            <img
+              class="person-image"
+              src="${value.attributes?.entity_picture || ""}"
+              alt="${key}"
+              title="${key.replace("person.", "").replace("_", " ")}"
+            />
+          `;
+        })}
       </ha-badge>
     `;
   }
