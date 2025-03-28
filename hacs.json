@@ -4,7 +4,6 @@
   "domains": ["badge"],
   "homeassistant": "2024.1.0",
   "iot_standards": [],
-  "logotype": "https://raw.githubusercontent.com/hco/persons-badge/main/logo.png",
   "filename": "persons-badge.js",
   "zip_release": true,
   "hide_default_branch": false,
