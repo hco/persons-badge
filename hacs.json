@@ -1,0 +1,13 @@
+{
+  "name": "Persons Badge",
+  "render_readme": true,
+  "domains": ["badge"],
+  "homeassistant": "2024.1.0",
+  "iot_standards": [],
+  "logotype": "https://raw.githubusercontent.com/hco/persons-badge/main/logo.png",
+  "filename": "persons-badge.js",
+  "zip_release": true,
+  "hide_default_branch": false,
+  "hacs": "1.6.0",
+  "version": "v1.0.0"
+}

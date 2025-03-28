@@ -3,9 +3,9 @@ import type { UserConfig } from "vite";
 export default {
   build: {
     lib: {
-      entry: "src/person-badge.ts",
+      entry: "src/persons-badge.ts",
       formats: ["es"],
-      fileName: "person-badge",
+      fileName: "persons-badge",
     },
     watch: {},
     outDir: "dist",
