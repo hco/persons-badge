@@ -42,6 +42,7 @@ class PersonBadge extends LitElement {
       border-radius: 50%;
       object-fit: cover;
       transition: transform 0.2s;
+      cursor: pointer;
     }
     .person-image:hover {
       transform: scale(1.5);
@@ -80,11 +81,29 @@ class PersonBadge extends LitElement {
               src="${value.attributes?.entity_picture || ""}"
               alt="${key}"
               title="${key.replace("person.", "").replace("_", " ")}"
+              @click=${() => this._handleClick(key)}
             />
           `;
         })}
       </ha-badge>
     `;
+  }
+
+  private _handleClick(entityId: string): void {
+    const event = new CustomEvent("hass-action", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        config: {
+          entity: entityId,
+          tap_action: {
+            action: "more-info",
+          },
+        },
+        action: "tap",
+      },
+    });
+    this.dispatchEvent(event);
   }
 }
 
