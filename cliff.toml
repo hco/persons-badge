@@ -1,5 +1,9 @@
+[remote.github]
+owner = "hco"
+repo = "persons-badge"
+
 [changelog]
-# changelog header
+# A Tera template to be rendered as the changelog's header.
 header = """
 # Changelog
 
@@ -9,38 +13,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 """
 
-# template for the version diff
-template = """
-## [{{ version | trim_start_matches(pat="v") }}] - {{ date | date(format="%Y-%m-%d") }}
-{% for group, commits in commits | group_by(attribute="group") %}
-### {{ group | upper_first }}
-{% for commit in commits %}
-- {{ commit.message | upper_first }}
-{% endfor %}
+# A Tera template to be rendered for each release in the changelog.
+body = """
+{%- macro remote_url() -%}
+https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
+{%- endmacro -%}
 
-{% endfor %}
+{% macro print_commit(commit) -%}
+- {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
+{% if commit.breaking %}[**breaking**] {% endif %}\
+{{ commit.message | upper_first }} - \
+([{{ commit.id | truncate(length=7, end="") }}]({{ self::remote_url() }}/commit/{{ commit.id }}))\
+{% endmacro -%}
+
+{% if version %}\
+{% if previous.version %}\
+## [{{ version | trim_start_matches(pat="v") }}]\
+({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% endif %}\
+{% else %}\
+## [unreleased]
+{% endif %}\
+
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim | upper_first }}
+{% for commit in commits
+| filter(attribute="scope")
+| sort(attribute="scope") %}
+{{ self::print_commit(commit=commit) }}
+{%- endfor %}
+{% for commit in commits %}
+{%- if not commit.scope -%}
+{{ self::print_commit(commit=commit) }}
+{% endif -%}
+{% endfor -%}
+{% endfor -%}
 """
 
-# remove the leading and trailing whitespace from the template
+# Remove leading and trailing whitespaces from the changelog.
 trim = true
 
-# sorting of the commits
-sort = "scope"
+[git]
+# Parse commits according to the conventional commits specification.
+conventional_commits = true
+# Exclude commits that do not match the conventional commits specification.
+filter_unconventional = true
+# Split commits on newlines, treating each line as an individual commit.
+split_commits = false
 
-# parse the commits based on a regex
+# Commit parsers with improved grouping
 commit_parsers = [
-    { message = "^feat", group = "Added" },
-    { message = "^fix", group = "Changed" },
-    { message = "^docs", group = "Changed" },
-    { message = "^style", group = "Changed" },
-    { message = "^refactor", group = "Changed" },
-    { message = "^perf", group = "Changed" },
-    { message = "^test", group = "Changed" },
-    { message = "^build", group = "Changed" },
-    { message = "^ci", group = "Changed" },
-    { message = "^chore", group = "Changed" },
-    { message = "^revert", group = "Removed" },
+    { message = "^feat", group = "<!-- 0 -->⛰️ Features" },
+    { message = "^fix", group = "<!-- 1 -->🐛 Bug Fixes" },
+    { message = "^doc", group = "<!-- 3 -->📚 Documentation" },
+    { message = "^perf", group = "<!-- 4 -->⚡ Performance" },
+    { message = "^refactor", group = "<!-- 2 -->🚜 Refactor" },
+    { message = "^style", group = "<!-- 5 -->🎨 Styling" },
+    { message = "^test", group = "<!-- 6 -->🧪 Testing" },
+    { message = "^chore\\(release\\): prepare for", skip = true },
+    { message = "^chore\\(deps.*\\)", skip = true },
+    { message = "^chore\\(pr\\)", skip = true },
+    { message = "^chore\\(pull\\)", skip = true },
+    { message = "^chore|^ci", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
+    { body = ".*security", group = "<!-- 8 -->🛡️ Security" },
+    { message = "^revert", group = "<!-- 9 -->◀️ Revert" },
 ]
 
-# filter out the commits that are not conventional
-filter_commits = true 
+# Prevent commits that are breaking from being excluded by commit parsers.
+protect_breaking_commits = false
+# Exclude commits that are not matched by any commit parser.
+filter_commits = false
+# Regex to select git tags that represent releases.
+tag_pattern = "v[0-9].*"
+# Sort commits by newest first
+sort_commits = "newest" 
