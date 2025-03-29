@@ -107,11 +107,11 @@ class PersonBadge extends LitElement {
   }
 }
 
-customElements.define("person-badge", PersonBadge);
+customElements.define("persons-badge", PersonBadge);
 window.customBadges = window.customBadges || [];
 window.customBadges.push({
-  type: "person-badge",
-  name: "Person Badge",
+  type: "custom:persons-badge",
+  name: "Persons Badge",
   preview: false,
   description: "A badge showing person state",
   documentationURL:
