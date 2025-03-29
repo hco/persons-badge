@@ -16,6 +16,8 @@ jobs:
         with:
           node-version: "18"
           cache: "npm"
+      - name: Set up git-cliff
+        uses: kenji-miyake/setup-git-cliff@v1
       - name: Install dependencies
         run: npm ci
       - name: Build
