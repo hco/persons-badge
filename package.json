@@ -17,6 +17,7 @@
     "lit": "^3.2.1"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^10.0.0",
     "git-cliff": "^2.8.0",
     "http-server": "^14.1.1",
     "release-it": "^18.1.2",
