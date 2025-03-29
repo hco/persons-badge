@@ -27,7 +27,7 @@ jobs:
         run: npm run build
       - name: Generate Changelog
         id: changelog
-        run: git-cliff --output CHANGELOG.md && echo "content<<EOF" >> $GITHUB_OUTPUT && cat CHANGELOG.md >> $GITHUB_OUTPUT && echo "EOF" >> $GITHUB_OUTPUT
+        run: git-cliff --latest --output CHANGELOG.md && echo "content<<EOF" >> $GITHUB_OUTPUT && cat CHANGELOG.md >> $GITHUB_OUTPUT && echo "EOF" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
