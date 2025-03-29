@@ -7,9 +7,5 @@
   },
   "github": {
     "release": false
-  },
-  "hooks": {
-    "before:init": ["git-cliff --output CHANGELOG.md"],
-    "after:bump": ["git-cliff --output CHANGELOG.md"]
   }
 }
