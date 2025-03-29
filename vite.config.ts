@@ -7,7 +7,6 @@ export default {
       formats: ["es"],
       fileName: "persons-badge",
     },
-    watch: {},
     outDir: "dist",
   },
 } satisfies UserConfig;
